@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笨蛋琳琳计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            /* background: url('https://img.freepik.com/free-photo/young-couple-hugging-beach-sunset_1153-9343.jpg') no-repeat center center fixed; */
+            background: url('http://img.auroraboat.cn/zll.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 0;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid rgba(255, 192, 203, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ff6b88;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ff6b88;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ffb6c1;
+            background: rgba(255, 255, 255, 0.9);
+            color: #555;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff6b88;
+            box-shadow: 0 0 8px rgba(255, 107, 136, 0.3);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            accent-color: #ff6b88;
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0;
+        }
+        
+        button {
+            background: linear-gradient(to right, #ff6b88, #ff8e9e);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 107, 136, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 107, 136, 0.4);
+            background: linear-gradient(to right, #ff8e9e, #ff6b88);
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .result-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-section h2 {
+            text-align: center;
+            color: #ff6b88;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 136, 0.1);
+        }
+        
+        .result-card h3 {
+            color: #ff6b88;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6b88;
+        }
+        
+        .result-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .rose-icon {
+            font-size: 1.2rem;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+        
+        .rose-icon.pink {
+            color: #ff6b88;
+        }
+        
+        .rose-icon.red {
+            color: #ff4757;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            color: #666;
+        }
+        
+        .note h3 {
+            color: #ff6b88;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .note ul {
+            padding-left: 20px;
+        }
+        
+        .note li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 600px) {
+            .input-section, .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>笨蛋琳琳计算器</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="currentIntimacy">当前亲密度</label>
+                <input type="number" id="currentIntimacy" min="0" value="0">
+            </div>
+            
+            <div class="input-group">
+                <label for="gameMode">游戏模式</label>
+                <select id="gameMode">
+                    <option value="match">匹配模式 (3点/场)</option>
+                    <option value="rank">排位模式 (6点/场)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="targetLevel">目标等级</label>
+                <select id="targetLevel">
+                    <option value="100">1级 (100点)</option>
+                    <option value="600">2级 (600点)</option>
+                    <option value="1200">3级 (1200点)</option>
+                    <option value="2000">4级 (2000点)</option>
+                    <option value="3000">5级 (3000点)</option>
+                    <option value="4000">6级 (4000点)</option>
+                    <option value="5000">7级 (5000点)</option>
+                    <option value="6000">8级 (6000点)</option>
+                    <option value="7000">9级 (7000点)</option>
+                    <option value="8000">10级 (8000点)</option>
+                    <option value="9000">11级 (9000点)</option>
+                    <option value="10000">12级 (10000点)</option>
+                    <option value="11000">13级 (11000点)</option>
+                    <option value="12000">14级 (12000点)</option>
+                    <option value="13000">15级 (13000点)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="dailyRoseLimit">每日玫瑰上限</label>
+                <input type="number" id="dailyRoseLimit" value="50" readonly>
+            </div>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="useCPHero" checked>
+            <label for="useCPHero">使用CP英雄 (每场额外+3点)</label>
+        </div>
+        
+        <button id="calculateBtn">计算所需资源</button>
+        
+        <div class="results" id="resultsSection" style="display: none;">
+            <div class="result-section">
+                <h2>游戏场次方案</h2>
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h3>需要天数</h3>
+                        <div class="result-value" id="days">0</div>
+                        <div class="result-label">达到目标所需天数</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>每周场次</h3>
+                        <div class="result-value" id="weeklyGames">0</div>
+                        <div class="result-label">达到每周上限</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>总场次</h3>
+                        <div class="result-value" id="totalGames">0</div>
+                        <div class="result-label">自然增长总场次</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>每场点数</h3>
+                        <div class="result-value" id="perGame">0</div>
+                        <div class="result-label">每场获得亲密度</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2>玫瑰道具方案</h2>
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h3><span class="rose-icon pink">🌹</span> 亲密玫瑰</h3>
+                        <div class="result-value" id="rose5">0</div>
+                        <div class="result-label">(5点/朵)</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3><span class="rose-icon red">🌹</span> 浓情玫瑰</h3>
+                        <div class="result-value" id="rose10">0</div>
+                        <div class="result-label">(10点/朵)</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>亲密玫瑰天数</h3>
+                        <div class="result-value" id="rose5Days">0</div>
+                        <div class="result-label">(每日50朵上限)</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>浓情玫瑰天数</h3>
+                        <div class="result-value" id="rose10Days">0</div>
+                        <div class="result-label">(每日50朵上限)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="note">
+                <h3>计算说明</h3>
+                <ul>
+                    <li><strong>游戏场次方案</strong>：每周最多通过游戏获得140点亲密度</li>
+                    <li><strong>匹配模式</strong>：每场3点，排位模式每场6点</li>
+                    <li><strong>CP英雄</strong>：使用CP英雄时，每场额外获得3点</li>
+                    <li><strong>玫瑰道具方案</strong>：亲密玫瑰(5点/朵)，浓情玫瑰(10点/朵)</li>
+                    <li><strong>每日上限</strong>：每种玫瑰每天最多使用50朵</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', calculateIntimacy);
+        
+        function calculateIntimacy() {
+            // 获取输入值
+            const currentIntimacy = parseInt(document.getElementById('currentIntimacy').value) || 0;
+            const targetLevel = parseInt(document.getElementById('targetLevel').value);
+            const gameMode = document.getElementById('gameMode').value;
+            const dailyRoseLimit = parseInt(document.getElementById('dailyRoseLimit').value);
+            const useCPHero = document.getElementById('useCPHero').checked;
+            
+            // 计算剩余亲密度
+            let remaining = targetLevel - currentIntimacy;
+            
+            if (remaining <= 0) {
+                alert('当前亲密度已达到或超过目标等级！');
+                return;
+            }
+            
+            // ========== 游戏场次方案计算 ==========
+            // 每周上限固定为140点
+            const weeklyMax = 140;
+            
+            // 计算每场游戏获得的亲密度
+            let perGame = gameMode === 'rank' ? 6 : 3;
+            if (useCPHero) {
+                perGame += 3;
+            }
+            
+            // 计算每周需要场次（达到140点上限）
+            const weeklyGames = Math.ceil(weeklyMax / perGame);
+            
+            // 计算需要多少周（自然增长部分）
+            const weeks = Math.ceil(remaining / weeklyMax);
+            // 转换为天数
+            const days = weeks * 7;
+            
+            // 计算总场次（自然增长部分）
+            const totalGames = weeks * weeklyGames;
+            
+            // 更新游戏场次方案结果
+            document.getElementById('days').textContent = days;
+            document.getElementById('weeklyGames').textContent = weeklyGames;
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('perGame').textContent = perGame;
+            
+            // ========== 玫瑰道具方案计算 ==========
+            // 亲密玫瑰(5点/朵)
+            const rose5 = Math.ceil(remaining / 5);
+            const rose5Days = Math.ceil(rose5 / dailyRoseLimit);
+            
+            // 浓情玫瑰(10点/朵)
+            const rose10 = Math.ceil(remaining / 10);
+            const rose10Days = Math.ceil(rose10 / dailyRoseLimit);
+            
+            // 更新玫瑰道具方案结果
+            document.getElementById('rose5').textContent = rose5;
+            document.getElementById('rose10').textContent = rose10;
+            document.getElementById('rose5Days').textContent = rose5Days;
+            document.getElementById('rose10Days').textContent = rose10Days;
+            
+            // 显示结果区域
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // 滚动到结果区域
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
